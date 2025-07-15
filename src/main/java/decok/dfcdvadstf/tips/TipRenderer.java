@@ -7,9 +7,6 @@ import org.lwjgl.opengl.GL11;
 
 public class TipRenderer {
     public static void renderTip(GuiScreen screen) {
-        // 更新提示（如果需要）
-        Tippy.updateTipIfNeeded(false);
-
         // 获取 Minecraft 实例
         Minecraft mc = Minecraft.getMinecraft();
 
@@ -24,7 +21,7 @@ public class TipRenderer {
 
         // 获取本地化文本
         String title = StatCollector.translateToLocal("tippy.title");
-        String tip = StatCollector.translateToLocal(Tippy.getCurrentTipKey());
+        String tip = StatCollector.translateToLocal(Tippy.getRandomTipKey());
 
         // 启用混合模式确保透明度正确
         GL11.glEnable(GL11.GL_BLEND);
