@@ -26,24 +26,26 @@ public class Tippy {
     public static final String VERSION = "1.2.0"; // 版本号更新
     public static Logger logger;
 
+    // Config default setting
     // 配置选项
-    public static int titleColor = 0xFFAA00; // 标题颜色 (橙色)
-    public static int contentColor = 0xFFFFFF; // 内容颜色 (白色)
-    public static int posX = 10; // X位置
-    public static int posY = -30; // Y位置 (负数表示从底部计算)
-    public static int switchInterval = 10; // 提示切换间隔(秒)
+    public static int titleColor = 0xFFAA00; // 标题颜色 (橙色) // Title color (Orange)
+    public static int contentColor = 0xFFFFFF; // 内容颜色 (白色) // Content color (White)
+    public static int posX = 10; // X位置 // The X position
+    public static int posY = -30; // Y位置 (负数表示从底部计算) // The Y position (The negative number means that it was rendered from the bottom)
+    public static int switchInterval = 10; // 提示切换间隔(秒) // Duration of tips switched
     public static List<String> tipKeys = new ArrayList<>();
     public static Random random = new Random();
     public static JsonObject configJson;
 
+    // Managing tips' state
     // 提示状态管理
-    public static long lastSwitchTime = 0; // 上次切换时间
-    public static String currentTipKey = ""; // 当前显示的提示键
+    public static long lastSwitchTime = 0; // 上次切换时间 // Last time that change the tips
+    public static String currentTipKey = ""; // 当前显示的提示键 // Currently rendering tip
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {
         logger = event.getModLog();
-        logger.info("Initializing Tippy Mod for Minecraft 1.7.10");
+        logger.info("Initializing Tippy for Minecraft 1.7.10");
 
         // 加载配置
         Configuration config = new Configuration(event.getSuggestedConfigurationFile());
@@ -64,6 +66,7 @@ public class Tippy {
     @EventHandler
     public void init(FMLInitializationEvent event) {
         // 初始化提示
+        // Initialize tips
         updateTipIfNeeded(true);
     }
 
@@ -73,16 +76,19 @@ public class Tippy {
 
         try {
             // 创建配置目录
+            // Create config dir
             if (!configDir.exists()) {
                 configDir.mkdirs();
             }
 
             // 创建默认提示文件
+            // Create default tips file (tips.json)
             if (!tipsFile.exists()) {
                 JsonObject defaultConfig = new JsonObject();
                 JsonArray defaultTips = new JsonArray();
 
                 // 添加默认提示键名
+                // Add default tips key (For localize)
                 defaultTips.add(new JsonPrimitive("tippy.tip1"));
                 defaultTips.add(new JsonPrimitive("tippy.tip2"));
                 defaultTips.add(new JsonPrimitive("tippy.tip3"));
@@ -90,6 +96,7 @@ public class Tippy {
                 defaultConfig.add("tips", defaultTips);
 
                 // 写入默认配置
+                // Access the default config
                 FileUtils.writeStringToFile(
                         tipsFile,
                         new Gson().toJson(defaultConfig),
@@ -98,11 +105,13 @@ public class Tippy {
             }
 
             // 读取配置文件
+            // Read config file
             String jsonContent = FileUtils.readFileToString(tipsFile, StandardCharsets.UTF_8);
             JsonParser parser = new JsonParser();
             configJson = parser.parse(jsonContent).getAsJsonObject();
 
             // 加载提示键名
+            // Render tips key (If file is unavailable, add default tips)
             tipKeys.clear();
             JsonArray tipsArray = configJson.getAsJsonArray("tips");
             for (int i = 0; i < tipsArray.size(); i++) {
@@ -119,24 +128,28 @@ public class Tippy {
     }
 
     // 获取当前提示键
+    // Get currently rendering tips
     public static String getCurrentTipKey() {
         return currentTipKey;
     }
 
     // 更新提示（如果需要）
+    // Update tips if needed
     public static void updateTipIfNeeded(boolean forceUpdate) {
         long currentTime = System.currentTimeMillis();
-        long intervalMillis = switchInterval * 1000L; // 转换为毫秒
+        long intervalMillis = switchInterval * 1000L; // 转换为毫秒 // Convert to millisecond
 
         // 检查是否需要更新提示
-        if (forceUpdate || currentTime - lastSwitchTime > intervalMillis) {
-            // 获取新提示
+        // Check whether need to update tips
+        if (forceUpdate || currentTime - lastSwitchTime > intervalMillis) {// 添加默认提示作为后备
+            // 获取新提示 (若无提示，在提示中显示 “无提示可用，检查 config/tippy/tips.json”) // Get new tips, if file is empty send message, "No tips available, check config/tippy/tips.json" in tips
             if (!tipKeys.isEmpty()) {
                 currentTipKey = tipKeys.get(random.nextInt(tipKeys.size()));
             } else {
                 currentTipKey = "tippy.no_tips";
             }
 
+            // Update switch times
             // 更新切换时间
             lastSwitchTime = currentTime;
         }
