@@ -23,7 +23,7 @@ import java.util.Random;
 @Mod(modid = Tippy.MODID, version = Tippy.VERSION, name = "Tippy")
 public class Tippy {
     public static final String MODID = "tippy";
-    public static final String VERSION = "1.2.0"; // 版本号更新
+    public static final String VERSION = "1.2.4"; // 版本号更新 // Update the version number
     public static Logger logger;
 
     // Config default setting
