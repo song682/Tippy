@@ -1,13 +1,19 @@
 {
   "package": "decok.dfcdvadstf.tips.mixin",
   "compatibilityLevel": "JAVA_8",
+  "refmap": "mixins.tippy.refmap.json",
   "mixins": [
     "MixinGuiScreenWorking",
     "MixinGuiConnecting",
     "MixinGuiDisconnected",
     "MixinGuiIngameMenu"
   ],
-  "client": [],
+  "client": [
+    "MixinGuiScreenWorking",
+    "MixinGuiConnecting",
+    "MixinGuiDisconnected",
+    "MixinGuiIngameMenu"
+  ],
   "required": true,
   "minVersion": "0.7.11"
 }
