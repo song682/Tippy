@@ -15,5 +15,5 @@
     "MixinGuiIngameMenu"
   ],
   "required": true,
-  "minVersion": "0.7.11"
+  "minVersion": "0.8.5"
 }
