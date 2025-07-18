@@ -1,11 +1,14 @@
+repositories {
+    maven {
+        url 'https://jitpack.io'
+    }
+}
 
-// === === === === === === Mixin Path Start === === === === === ===
+def unimixinsVersion = "0.1.15"
 
-def mixinConfig = "mixins.${modId}.json"
-def refMap = "mixins.${modId}.refmap.json"
-
-if (!project.embedMixin.toBoolean()) {
-    version += "-mixinless"
+dependencies {
+    implementation("com.github.LegacyModdingMC.UniMixins:unimixins-all-1.7.10:$unimixinsVersion:dev")
+    annotationProcessor("com.github.LegacyModdingMC.UniMixins:unimixins-all-1.7.10:$unimixinsVersion:dev")
 }
 
 runClient {
@@ -16,65 +19,24 @@ runServer {
     args("--tweakClass", "org.spongepowered.asm.launch.MixinTweaker")
 }
 
-
-repositories {
-    maven {
-        url 'https://jitpack.io'
-    }
-}
-
-
-dependencies {
-    if (project.embedMixin.toBoolean()) {
-        includeCompile("com.github.LegacyModdingMC.UniMixins:unimixins-all-1.7.10:0.1.15:dev")
-    } else {
-        implementation("com.github.LegacyModdingMC.UniMixins:unimixins-all-1.7.10:0.1.15:dev")
-    }
-}
-
-configurations.implementation.dependencies.each {
-    if (it instanceof ExternalModuleDependency) {
-        it.exclude module: "SpongeMixins"
-        it.exclude module: "SpongePoweredMixin"
-        it.exclude module: "00gasstation-mc1.7.10"
-        it.exclude module: "gtnhmixins"
-    }
-}
-
-def srgFile = "${tasks.compileJava.temporaryDir}/mcpSrg.srg"
-def refMapFile = "${tasks.compileJava.temporaryDir}/$refMap"
-
-def srgFileF = new File(srgFile)
-if (!srgFileF.exists()) {
-    srgFileF.createNewFile()
-}
+def outSrgFile = "${tasks.compileJava.temporaryDir}/outSrg.srg"
+def outRefMapFile = "${tasks.compileJava.temporaryDir}/mixins.${modId}.refmap.json"
 
 jar {
     manifest {
         attributes (
                 'TweakClass': 'org.spongepowered.asm.launch.MixinTweaker',
-                'MixinConfigs': "$mixinConfig",
-                'FMLCorePlugin': 'io.github.legacymoddingmc.unimixins.example.ExampleCore',
+                'MixinConfigs': "mixins.${modId}.json",
                 'ForceLoadAsMod': 'true',
                 'FMLCorePluginContainsFMLMod': 'true',
         )
     }
 
-    from refMapFile;
+    from outRefMapFile;
 }
 
-tasks.compileJava.options.compilerArgs += ["-AreobfSrgFile=${tasks.reobf.srg}", "-AsrgFile=${srgFile}", "-ArefMapFile=${refMapFile}"];
+tasks.compileJava.options.compilerArgs += ["-AreobfSrgFile=${tasks.reobf.srg}", "-AoutSrgFile=${outSrgFile}", "-AoutRefMapFile=${outRefMapFile}"];
 
 reobf {
-    addExtraSrgFile srgFile
+    addExtraSrgFile outSrgFile
 }
-
-processResources {
-    inputs.property "mixin_refmap", project.version
-
-    filesMatching("$mixinConfig") {
-        expand 'mixin_refmap': refMap
-    }
-}
-
-// === === === === === === Mixin Path End === === === === === ===
