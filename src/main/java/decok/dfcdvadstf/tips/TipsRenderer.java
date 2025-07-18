@@ -18,15 +18,21 @@ public class TipsRenderer {
         // Get the FontRenderer method and do Null Point Check
         if (mc.fontRenderer == null) return;
 
-        // 计算实际Y位置
-        // Calculate the actually Y axis that rendering on the screen
+
+        // 计算实际X位置（支持负值：从屏幕右侧定位）
+        // Calculate the actually X axis that rendering on the screen (Support negative number, means from right)
+        int xPos = Tippy.posX;
+        if (xPos < 0) {
+            xPos = screen.width + xPos;
+        }
+
+        // 计算实际Y位置（支持负值：从屏幕下方定位）
+        // Calculate the actually Y axis that rendering on the screen (Support negative number, means from bottom)
         int yPos = Tippy.posY;
         if (yPos < 0) {
             yPos = screen.height + yPos;
         }
-
-
-
+        
         // 获取本地化文本
         // Get localized text
         // String title = I18n.format("tippy.title");
