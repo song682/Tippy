@@ -9,30 +9,32 @@ import org.lwjgl.opengl.GL11;
 
 public class TipsRenderer {
     public static void renderTip(GuiScreen screen) {
+        // Update tips while this was needed
+        // 更新提示（如果需要）
+        Tippy.updateTipIfNeeded(false);
 
         // 获取 Minecraft 实例 (允许我使用 FontRenderer)
-        // Get Minecraft instance to allow me use FontRenderer
+        // Get Minecraft instance to allow me to use FontRenderer
         Minecraft mc = Minecraft.getMinecraft();
 
         // 获取 FontRenderer (同时做空值检查)
         // Get the FontRenderer method and do Null Point Check
         if (mc.fontRenderer == null) return;
 
+        // 计算实际 X 位置（支持负值：从屏幕右侧定位）
 
-        // 计算实际X位置（支持负值：从屏幕右侧定位）
-        // Calculate the actually X axis that rendering on the screen (Support negative number, means from right)
         int xPos = Tippy.posX;
         if (xPos < 0) {
             xPos = screen.width + xPos;
         }
 
-        // 计算实际Y位置（支持负值：从屏幕下方定位）
-        // Calculate the actually Y axis that rendering on the screen (Support negative number, means from bottom)
+        // 计算实际Y位置（负值：从屏幕下方定位；正值：从屏幕下方定位）
+        // Calculate the actually Y axis that rendering on the screen, negative number -> from bottom, positive
         int yPos = Tippy.posY;
         if (yPos < 0) {
             yPos = screen.height + yPos;
         }
-        
+
         // 获取本地化文本
         // Get localized text
         // String title = I18n.format("tippy.title");
@@ -49,7 +51,7 @@ public class TipsRenderer {
         // Rendering title
         mc.fontRenderer.drawStringWithShadow(
                 title,
-                Tippy.posX,
+                xPos,
                 yPos,
                 Tippy.titleColor
         );
@@ -58,7 +60,7 @@ public class TipsRenderer {
         // Rendering tips content
         mc.fontRenderer.drawStringWithShadow(
                 tip,
-                Tippy.posX,
+                xPos,
                 yPos + 10,
                 Tippy.contentColor
         );
