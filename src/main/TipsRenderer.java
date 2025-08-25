@@ -10,7 +10,7 @@ import java.util.regex.Matcher;
 
 public class TipsRenderer {
     // 转义序列模式
-    private static final Pattern ESCAPE_PATTERN = Pattern.compile("\\\\(.)");
+    private static final Pattern ESCAPE_PATTERN = Pattern.compile("\\\\([nrt\\\\\"'])");
 
     public static void renderTip(GuiScreen screen) {
         // 获取 Minecraft 实例 (允许我使用 FontRenderer)
@@ -101,10 +101,13 @@ public class TipsRenderer {
 
             switch (escapeChar) {
                 case "n":
-                    replacement = "\n"; // 换行符 line break charactor
+                    replacement = "\n"; // 换行符 line break character
                     break;
                 case "t":
                     replacement = "\t"; // 制表符 tab
+                    break;
+                case "r" :
+                    replacement = "\r"; // 回车符 return
                     break;
                 case "\\":
                     replacement = "\\"; // 反斜杠本身 backslash
@@ -116,13 +119,14 @@ public class TipsRenderer {
                     replacement = "'"; // 单引号 single quotation marks
                     break;
                 default:
-                    // 未知的转义序列，保留原样
-                    // Unknown escape sequence, keep the original
+                    // 未知的转义序列，保留原样 （之前是如此，现在不是）,不应该到达这里，因为正则表达式已经限制了匹配的字符
+                    // Unknown escape sequence, keep the original (Used to be correct, right now it isn't, since regex limited the character that we'll match)
                     replacement = matcher.group(0);
                     break;
             }
 
-            matcher.appendReplacement(result, replacement);
+            // 使用 Matcher.quoteReplacement 来避免替换字符串中的特殊字符（如$）被解释
+            matcher.appendReplacement(result, Matcher.quoteReplacement(replacement));
         }
 
         matcher.appendTail(result);
