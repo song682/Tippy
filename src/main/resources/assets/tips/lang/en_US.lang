@@ -1,8 +1,3 @@
-tips.pineapple.test=Pineapple level testing!
-tips.pineapple.wolf_tail=How long is Someoneice's tail?
-tips.pineapple.mana_metal=Why not try ManaMetalMod!
-tips.pineapple.paster_dream=Have you ever had a PasterDream?
-
 # Tippy Localization - English
 tippy.title=Tip
 tippy.tip1=Press F3 for debug information
@@ -12,5 +7,6 @@ tippy.tip4=Press ESC to pause the game
 tippy.tip5=Left-click to break blocks, right-click to place/use
 # Add a tip that available is false
 tippy.no_tips=No tips available. Check config/tippy/tips.json
+
 
 

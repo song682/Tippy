@@ -9,9 +9,6 @@ import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.FMLCommonHandler;
-import net.minecraft.command.CommandHandler;
-import decok.dfcdvadstf.tips.utils.TippyLogger;
 import net.minecraftforge.common.config.Configuration;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.Logger;
@@ -24,10 +21,8 @@ import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
-@Mod(modid = Tippy.MODID, version = Tippy.VERSION, name = "Tippy")
-public class Tippy {
-    public static final String MODID = "tippy";
-    public static final String VERSION = "1.5.0"; // 版本号更新 // Update the version number
+@Mod(modid = Tags.MODID, version = Tags.VERSION, name = Tags.MODNAME)
+public class Tippy { 
     public static Logger logger;
 
     // Config default setting
@@ -52,20 +47,18 @@ public class Tippy {
         logger.info("Initializing Tippy for Minecraft 1.7.10");
 
         // 加载配置
-        // Loading Configuration File
         Configuration config = new Configuration(event.getSuggestedConfigurationFile());
         config.load();
 
         titleColor = config.getInt("titleColor", "colors", titleColor, 0, 0xFFFFFF, "Title text color (RGB hex)");
         contentColor = config.getInt("contentColor", "colors", contentColor, 0, 0xFFFFFF, "Content text color (RGB hex)");
-        posX = config.getInt("posX", "position", posX, -1000, 1000, "Horizontal position");
+        posX = config.getInt("posX", "position", posX, 0, 1000, "Horizontal position");
         posY = config.getInt("posY", "position", posY, -1000, 1000, "Vertical position (negative = from bottom)");
         switchInterval = config.getInt("switchInterval", "behavior", switchInterval, 1, 3600, "Tip switch interval in seconds");
 
         config.save();
 
         // 加载提示文件
-        // Load Tips File
         loadTipsConfig();
     }
 
@@ -74,9 +67,6 @@ public class Tippy {
         // 初始化提示
         // Initialize tips
         updateTipIfNeeded(true);
-
-        CommandHandler handler = (CommandHandler) FMLCommonHandler.instance().getMinecraftServerInstance().getCommandManager();
-        handler.registerCommand(new CommandCheckJson());
     }
 
     private void loadTipsConfig() {
@@ -113,6 +103,8 @@ public class Tippy {
                 );
             }
 
+            // 读取配置文件
+            // Read config file
             String jsonContent = FileUtils.readFileToString(tipsFile, StandardCharsets.UTF_8);
             JsonParser parser = new JsonParser();
             configJson = parser.parse(jsonContent).getAsJsonObject();
@@ -125,9 +117,9 @@ public class Tippy {
                 tipKeys.add(tipsArray.get(i).getAsString());
             }
 
-            TippyLogger.info("Loaded " + tipKeys.size() + " tip keys from config file");
+            logger.info("Loaded " + tipKeys.size() + " tip keys from config file");
         } catch (IOException e) {
-            TippyLogger.error("Failed to load tips config: " + e.getMessage());
+            logger.error("Failed to load tips config: " + e.getMessage());
             // 添加默认提示作为后备
             tipKeys.add("tippy.tip1");
             tipKeys.add("tippy.tip2");
@@ -159,4 +151,5 @@ public class Tippy {
             lastSwitchTime = currentTime;
         }
     }
+
 }
