@@ -5,18 +5,16 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.util.StatCollector;
 import org.lwjgl.opengl.GL11;
 
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
+import java.util.regex.Matcher;
 
 public class TipsRenderer {
     // 转义序列模式
     private static final Pattern ESCAPE_PATTERN = Pattern.compile("\\\\(.)");
 
     public static void renderTip(GuiScreen screen) {
-
         // 获取 Minecraft 实例 (允许我使用 FontRenderer)
-        // Get Minecraft instance to allow me use FontRenderer
+        // Get Minecraft instance to allow me to use FontRenderer
         Minecraft mc = Minecraft.getMinecraft();
 
         // 获取 FontRenderer (同时做空值检查)
@@ -35,10 +33,14 @@ public class TipsRenderer {
         if (yPos < 0) {
             yPos = screen.height + yPos;
         }
+
         // 获取本地化文本
         // Get localized text
         String title = StatCollector.translateToLocal("tippy.title");
         String tip = StatCollector.translateToLocal(Tippy.getCurrentTipKey());
+
+        // 处理转义序列
+        tip = processEscapeSequences(tip);
 
         // 启用混合模式确保透明度正确
         // Enable blending mode to make sure the transparency is correct
@@ -54,31 +56,25 @@ public class TipsRenderer {
                 Tippy.titleColor
         );
 
-        // 处理提示内容中的换行符（包括本地化文件中的字面\n）
-        // Split tip content by newline characters (including literal \n from lang files)
-        String[] tipLines;
-        if (tip.contains("\\n")) {
-            // 处理本地化文件中的字面\n
-            tipLines = tip.split("\\\\n");
-        } else {
-            // 处理代码中添加的换行符
-            tipLines = tip.split("\n");
-        }
-
+        // 处理提示内容中的换行符
+        // Split tip content by newline characters
+        String[] tipLines = tip.split("\n");
         int lineHeight = mc.fontRenderer.FONT_HEIGHT + 2; // 行高，包括间距
 
-        // 绘制提示内容
-        // Rendering tips content
-        mc.fontRenderer.drawStringWithShadow(
-                tip,
-                xPos,
-                yPos + 10,
-                Tippy.contentColor
-        );
+        // 绘制提示内容（支持多行）
+        // Rendering tips content (support multiple lines)
+        for (int i = 0; i < tipLines.length; i++) {
+            mc.fontRenderer.drawStringWithShadow(
+                    tipLines[i],
+                    xPos,
+                    yPos + 10 + (i * lineHeight),
+                    Tippy.contentColor
+            );
+        }
 
         // 禁用混合模式
         // Disable blending mode
-         GL11.glDisable(GL11.GL_BLEND);
+        GL11.glDisable(GL11.GL_BLEND);
     }
 
     /**
@@ -88,12 +84,14 @@ public class TipsRenderer {
      * @param input 输入字符串
      * @return 处理后的字符串
      */
+
     private static String processEscapeSequences(String input) {
         if (input == null || input.isEmpty()) {
             return input;
         }
 
         // 创建匹配器
+        // Create matcher
         Matcher matcher = ESCAPE_PATTERN.matcher(input);
         StringBuffer result = new StringBuffer();
 
@@ -103,22 +101,23 @@ public class TipsRenderer {
 
             switch (escapeChar) {
                 case "n":
-                    replacement = "\n"; // 换行符
+                    replacement = "\n"; // 换行符 line break charactor
                     break;
                 case "t":
-                    replacement = "\t"; // 制表符
+                    replacement = "\t"; // 制表符 tab
                     break;
                 case "\\":
-                    replacement = "\\"; // 反斜杠本身
+                    replacement = "\\"; // 反斜杠本身 backslash
                     break;
                 case "\"":
-                    replacement = "\""; // 双引号
+                    replacement = "\""; // 双引号 double quotation marks
                     break;
                 case "'":
-                    replacement = "'"; // 单引号
+                    replacement = "'"; // 单引号 single quotation marks
                     break;
                 default:
                     // 未知的转义序列，保留原样
+                    // Unknown escape sequence, keep the original
                     replacement = matcher.group(0);
                     break;
             }
