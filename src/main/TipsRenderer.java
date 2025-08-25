@@ -5,8 +5,14 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.util.StatCollector;
 import org.lwjgl.opengl.GL11;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 
 public class TipsRenderer {
+    // 转义序列模式
+    private static final Pattern ESCAPE_PATTERN = Pattern.compile("\\\\(.)");
+
     public static void renderTip(GuiScreen screen) {
 
         // 获取 Minecraft 实例 (允许我使用 FontRenderer)
@@ -73,6 +79,54 @@ public class TipsRenderer {
         // 禁用混合模式
         // Disable blending mode
          GL11.glDisable(GL11.GL_BLEND);
+    }
 
+    /**
+     * 处理转义序列
+     * 将字符串中的转义序列转换为相应的字符
+     *
+     * @param input 输入字符串
+     * @return 处理后的字符串
+     */
+    private static String processEscapeSequences(String input) {
+        if (input == null || input.isEmpty()) {
+            return input;
+        }
+
+        // 创建匹配器
+        Matcher matcher = ESCAPE_PATTERN.matcher(input);
+        StringBuffer result = new StringBuffer();
+
+        while (matcher.find()) {
+            String escapeChar = matcher.group(1);
+            String replacement;
+
+            switch (escapeChar) {
+                case "n":
+                    replacement = "\n"; // 换行符
+                    break;
+                case "t":
+                    replacement = "\t"; // 制表符
+                    break;
+                case "\\":
+                    replacement = "\\"; // 反斜杠本身
+                    break;
+                case "\"":
+                    replacement = "\""; // 双引号
+                    break;
+                case "'":
+                    replacement = "'"; // 单引号
+                    break;
+                default:
+                    // 未知的转义序列，保留原样
+                    replacement = matcher.group(0);
+                    break;
+            }
+
+            matcher.appendReplacement(result, replacement);
+        }
+
+        matcher.appendTail(result);
+        return result.toString();
     }
 }
