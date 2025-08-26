@@ -12,4 +12,5 @@ More Specifically, it's UniMix+MixinExtra(MixinBoosterLegacy)
 
 ## Licence
 
-Code - [MIT Licence](LICENSE)
+Code - [MIT Licence](LICENSE)   
+Localization flies & icon - CopyRight (C) 2025 dfdvdsf
