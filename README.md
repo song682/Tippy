@@ -12,5 +12,5 @@ More Specifically, it's UniMix+MixinExtra(MixinBoosterLegacy)
 
 ## Licence
 
-Localization files - Copyright (c) 2025 dfdvdsf   
+Localization files & Icon - Copyright (c) 2025 dfdvdsf  
 Code - [MIT Licence](LICENSE)
