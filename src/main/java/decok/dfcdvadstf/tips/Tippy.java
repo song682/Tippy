@@ -22,7 +22,7 @@ import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 @Mod(modid = Tags.MODID, version = Tags.VERSION, name = Tags.MODNAME)
-public class Tippy { 
+public class Tippy { // 版本号更新 // Update the version number
     public static Logger logger;
 
     // Config default setting
@@ -151,5 +151,4 @@ public class Tippy {
             lastSwitchTime = currentTime;
         }
     }
-
 }
