@@ -15,7 +15,7 @@ public class TipsRenderer {
     public static void renderTip(GuiScreen screen) {
         // 获取 Minecraft 实例 (允许我使用 FontRenderer)
         // Get Minecraft instance to allow me to use FontRenderer
-        Minecraft mc = Minecraft.getMinecraft();
+        Minecraft mc = FMLClientHandler.instance().getClient();
 
         // 获取 FontRenderer (同时做空值检查)
         // Get the FontRenderer method and do Null Point Check
@@ -132,4 +132,5 @@ public class TipsRenderer {
         matcher.appendTail(result);
         return result.toString();
     }
+
 }
