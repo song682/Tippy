@@ -1,5 +1,6 @@
 package decok.dfcdvadstf.tips;
 
+import cpw.mods.fml.client.FMLClientHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.util.StatCollector;
@@ -134,3 +135,4 @@ public class TipsRenderer {
     }
 
 }
+
